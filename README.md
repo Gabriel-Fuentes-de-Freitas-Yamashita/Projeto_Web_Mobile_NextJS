@@ -46,3 +46,245 @@ A proposta é poder facilitar a consulta de produtos, para que as pessoas possam
 
 ## Vantagem da migração para ReactJS
 As vantagens da utilização de componentes ReactJS incluem a facilidade de troca de rotas para mudança de páginas, principalmente com relação a necessidade de fazer a troca de dados na mesma tela, além da facilidade de organização e manipulação dos dados.
+
+## Migração para NextJS
+
+As configuração de CSS foram colocados no arquivo global.css para facilitar o início da migração.
+
+### Estrutura das pastas e arquivos
+<img width="295" height="440" alt="image" src="https://github.com/user-attachments/assets/76560dd6-80ba-49bc-b641-ff595b01d839" />  
+
+Foi criado a pasta de componentes para armazenar o header e seção lateral que estão presentes em todas as abas, inseridos no arquivo layout.js.
+
+~~~js
+export default function RootLayout({ children }) {
+  return (
+    <html lang="pt-BR" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body>
+        <Header/>
+        {children}
+        <SecaoLateral/>
+      </body>
+    </html>
+  );
+}
+~~~
+
+A página home está na raiz do projeto "page.js" e as páginas de produto e de mercado estão criadas como novas abas que recebem como parâmetro as informações necessárias para carregar o conteúdo desejado (mercado -> nome, produto -> id)
+
+### Página Home
+<img width="1911" height="900" alt="image" src="https://github.com/user-attachments/assets/2225915b-f439-4a1d-a32e-47f9b9db66f8" />
+
+~~~js
+export default function Home()
+~~~
+
+Usar features do browser no lado do cliente e importar useState e Link
+~~~js
+"use client"
+import { useState } from 'react';
+import Link from 'next/link';
+~~~
+
+Alterar o filtro resulta na renderização das estruturas necessárias da página (lista de produtos mais populares)
+~~~js
+const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
+~~~
+
+Função de gerarCategorias altera a variável do useState (categoriaAtiva) através de setCategoriaAtiva
+~~~js
+// Gerar categorias dos produtos
+  function gerarCategorias() {
+      return <>
+          <section className="categorias-desktop">
+              <ul id="categorias-filtros">
+                  <li onClick={() => setCategoriaAtiva("Todos")} className={categoriaAtiva === "Todos" ? "filtro-ativo" : ""}> Todos </li>
+                  <li onClick={() => setCategoriaAtiva("Higiene e Perfumaria")} className={categoriaAtiva === "Higiene e Perfumaria" ? "filtro-ativo" : ""}> Higiene e Perfumaria </li>
+                  <li onClick={() => setCategoriaAtiva("Salgadinhos e Snacks")} className={categoriaAtiva === "Salgadinhos e Snacks" ? "filtro-ativo" : ""}> Salgadinhos e Snacks </li>
+                  <li onClick={() => setCategoriaAtiva("Padaria e Matinais")} className={categoriaAtiva === "Padaria e Matinais" ? "filtro-ativo" : ""}> Padaria e Matinais </li>
+                  <li onClick={() => setCategoriaAtiva("Bebidas")} className={categoriaAtiva === "Bebidas" ? "filtro-ativo" : ""}> Bebidas </li>
+                  <li onClick={() => setCategoriaAtiva("Energéticos e Isotônicos")} className={categoriaAtiva === "Energéticos e Isotônicos" ? "filtro-ativo" : ""}> Energéticos e Isotônicos </li>
+                  <li onClick={() => setCategoriaAtiva("Doces")} className={categoriaAtiva === "Doces" ? "filtro-ativo" : ""}> Doces </li>
+              </ul>
+          </section>
+          <section className="categorias-mobile">
+              <select id="filtros-mobile" value={categoriaAtiva} onChange={(e) => setCategoriaAtiva(e.target.value)}>
+                  <option value="Todos">Todos</option>
+                  <option value="Higiene e Perfumaria">Higiene e Perfumaria</option>
+                  <option value="Salgadinhos e Snacks">Salgadinhos e Snacks</option>
+                  <option value="Padaria e Matinais">Padaria e Matinais</option>
+                  <option value="Bebidas">Bebidas</option>
+                  <option value="Energéticos e Isotônicos">Energéticos e Isotônicos</option>
+                  <option value="Doces">Doces</option>
+              </select>
+          </section>
+      </>
+    ;
+  }
+~~~
+
+As outras funções foram apenas migradas e ajustadas para nomeclatura correta, "className" e fechamento de tags como "img"
+
+Retorno da página Home
+~~~js
+return (
+    <>
+      <form id="Pesquisa-Mobile" className="pesquisa-mobile">
+          <i className="fa fa-search icon"></i>
+          <input type="text" placeholder="Pesquisar..."/>
+      </form>
+      <main className="conteudo">
+        <article className="titulo">Produtos Mais Populares</article>
+        {gerarCategorias()} 
+        <section className="produtos">
+            {gerarCardsProdutos("Todos", produtosFiltrados)} 
+        </section>
+        <article className="titulo">Mercados</article>
+        <section className="mercados">
+            {gerarCardsMercados()}
+        </section>
+      </main>
+    </>
+  );
+~~~
+
+### Página de Produto
+<img width="1912" height="902" alt="image" src="https://github.com/user-attachments/assets/ad24a448-4961-4dbe-9a2e-0788200d1d1e" />
+
+~~~js
+export default function Produto()
+~~~
+
+Usar features do browser "use client" e importar Link, parâmetros via URL e dados de produtos e mercados
+~~~js
+"use client";
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { produtos } from "../../../data/produtos";
+import { mercados } from "../../../data/mercados";
+~~~
+
+Verifica id da URL e procura por produto com mesmo id
+~~~js
+const params = useParams();
+const idProduto = params.id;
+
+const produto = produtos.find(p => p.id === Number(idProduto));
+console.log(produto)
+if (!produto) {
+  alert("Produto Não Encontrado");
+  return;
+}
+~~~
+
+Retorno da página de produto
+~~~js
+return(
+        <section className="pagina-detalhes">
+            <button className="voltar">
+                <Link href={`/`} className="link-home"> Home </Link> &gt; {produto.nome}
+            </button>
+            <h1>{produto.nome}</h1>
+            <section className="pagina-produto">
+                <div className="imagem-produto">
+                    <img src={produto.imagem}/>
+                </div>
+                <section className="lista-mercados">
+                    {gerarMercadosDoProduto(produto.nome)}
+                </section>
+            </section>
+        </section>
+    );
+~~~
+
+### Página de Mercado
+<img width="1918" height="899" alt="image" src="https://github.com/user-attachments/assets/73791a60-e468-47d6-8e7c-91f56e492405" />
+
+~~~js
+export default function PaginaMercado()
+~~~
+
+Imports semelhantes a página de produto e "use client"
+~~~js
+"use client";
+import { mercados } from "../../../data/mercados";
+import { produtos } from "../../../data/produtos";
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import Link from 'next/link';
+~~~
+
+Criar variável categoriaAtiva para recarregar partes necessárias da página se houver alteração e procura de mercado com mesmo nome recebido via URL
+~~~js
+  const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
+  const params = useParams();
+  const nomeMercado = params.nome;
+
+  const mercado = mercados.find(
+    m => m.nome.toLowerCase() === nomeMercado.toLowerCase()
+  );
+
+~~~
+
+Retorno da página de mercado
+~~~js
+return (
+    <section className="pagina-detalhes">
+
+      <button className="voltar">
+        <Link href={`/`} className="link-home"> Home </Link> &gt; {mercado.nome}
+      </button>
+
+      <section className="pagina-mercado">
+
+        <section className="info-mercado">
+          <div className="imagem-mercado">
+            <img className="pagina-mercado-imagem" src={mercado.imagem} alt={mercado.nome}  />
+          </div>
+          <h1>{mercado.nome}</h1>
+          <p>{mercado.endereco}</p>
+        </section>        
+
+        <section className="produtos-mercado">
+
+          <article className="titulo">
+            Produtos Mais Populares
+          </article>
+
+          {gerarCategorias?.()}
+
+          <section className="produtos">
+
+            {produtosNesteMercado.length === 0 ? (
+              <p>Nenhum produto encontrado neste mercado</p>
+            ) : (
+              produtosNesteMercado.map(produto => (
+                <article key={produto.id} className="produto">
+
+                  <img
+                    src={produto.imagem}
+                    alt={produto.nome}
+                  />
+
+                  <section className="info-produto">
+                    <p>{produto.nome}</p>
+                    <p className="preco">
+                      R$ {produto.precoLocal.toFixed(2).replace(".", ",")}
+                    </p>
+                  </section>
+
+                  <button className="adicionar-home">
+                    +
+                  </button>
+
+                </article>
+              ))
+            )}
+
+          </section>
+
+        </section>
+      </section>
+    </section>
+  );
+~~~
