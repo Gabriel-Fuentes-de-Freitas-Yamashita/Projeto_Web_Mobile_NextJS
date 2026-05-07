@@ -289,7 +289,7 @@ return (
   );
 ~~~
 
-Divisão da aplicação em arquivos separados usando componentização (CardProduto e CardMercado)
+Divisão da aplicação em arquivos separados usando componentização (CardProduto e CardMercado) junto com a separação do CSS em arquivos diferentes utilizando "styles"
 
 <img width="373" height="188" alt="image" src="https://github.com/user-attachments/assets/b54e88c9-a958-463d-8cba-18a3a9024f54" />
 
@@ -316,7 +316,7 @@ const gerarCardsMercados = (mercados) => {
 export default gerarCardsMercados;
 ~~~
 
-cardProduto.jsx 
+CardProduto.jsx 
 ~~~js
 function gerarCardsProdutos(categoriaFiltro = "Todos", listaBase = null) {
 
