@@ -3,6 +3,27 @@
     flex-direction: column;
 }
 
+.pagina-detalhes > h1{
+    display: flex;
+    font-size: 24pt;
+    font-weight: bolder;
+    margin-bottom: 20px;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 600px) {
+    .pagina-detalhes > h1{
+        font-size: 20pt;
+        justify-content: center;
+    }
+
+    .pagina-produto {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
 /* (Botão) Voltar a Home Page */
 
 .voltar {
@@ -27,50 +48,54 @@
     color: black;
 }
 
+.link-home {
+    color: black;
+    text-decoration: none;
+    margin-right: 8px;
+}
+
 .link-home:hover  {
     cursor: pointer;
     text-decoration: underline;
 }
 
-/* Seção do Produto */
-
-/* Nome */
-
-.pagina-detalhes > h1{
+.pagina-mercado {
     display: flex;
-    font-size: 24pt;
-    font-weight: bolder;
-    margin-bottom: 20px;
-    white-space: normal;
-    overflow-wrap: break-word;
+    gap: 80px;
+    width: 100%;
 }
 
-.pagina-produto {
+@media (max-width: 600px) {
+    .pagina-mercado {
+        flex-direction: column;
+        gap: 30px;
+    }
+}
+
+/* Imagem e informações do mercado */
+
+.imagem-mercado {
     display: flex;
-    align-items: flex-start;
-    flex: 1 1 0;
-    gap: 5%;
-    width: 100%;
-    max-width: 100%;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 16px;
+    background-color: white;
+    flex: 1 1 250px;
+    width: 250px;
+    max-width: 250px;
+    min-width: 100px;
+    aspect-ratio: 1 / 1;
     box-sizing: border-box;
 }
 
-.mercado img{
-    margin: 0px;
-    width: 120px;
-    height: 100px;
+.imagem-mercado img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
-    border-radius: 30px;
-    background-color: white;
-    padding: 20px 10px;
-    box-shadow: 0px 0px 16px var(--cor-principal);
-    margin-bottom: 20px;
-}
-
-.mercado p {
-    font-size: 16px;
-    text-align: center;
-    font-weight: 600;
 }
 
 .info-mercado > h1 {
@@ -88,14 +113,107 @@
     max-width: 100%;
 }
 
+/* Categorias e lista de produtos */
+
+.produtos-mercado {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+}
+
+.produtos-mercado .categorias-desktop {
+    height: 60px;
+    width: 100%;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+.pagina-produto {
+    display: flex;
+    align-items: flex-start;
+    flex: 1 1 0;
+    gap: 5%;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Seção de Produtos Mais Populares */
+
+.titulo { 
+    padding: 20px 0px;
+    font-size: 24pt;
+}
+
+.categorias-mobile {
+    display: none;
+}
+
+.categorias-desktop {
+    height: 60px;
+    width: 100%;
+    overflow-x: auto;
+    max-width: calc(100vw - 55px);
+}
+
+.categorias-desktop ul{
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    margin-bottom: 10px;
+}
+
+.categorias-desktop li{
+    background-color: color-mix(in srgb, var(--cor-header-lateral), transparent 80%);
+    color: black;
+    font-size: 12pt;
+    padding: 5px 20px;
+    border-radius: 100px;
+    margin-right: 15px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+li.filtro-ativo {
+    background-color: var(--cor-header-lateral);
+    color: white;
+}
+
 @media (max-width: 600px) {
-    .pagina-detalhes > h1{
-        font-size: 20pt;
-        justify-content: center;
+    .titulo {
+        font-size: 18pt;
     }
 
-    .pagina-produto {
-        flex-direction: column;
-        align-items: center;
+    .categorias-desktop {
+        display: none;
     }
+
+    .categorias-mobile {
+        display: flex;
+        padding-bottom: 20px;
+        border: 1x solid var(--cor-header-lateral);
+
+    }
+
+    .categorias-mobile select {
+        width: 100%;
+        border-radius: 10px 10px 0px 0px;
+        border: 1px solid var(--cor-header-lateral);
+        background-color: color-mix(in srgb, var(--cor-principal), transparent 90%);;
+        padding: 8px 10px;
+        font-size: 12pt;
+        color: var(--cor-header-lateral);
+    }
+}
+
+/* Lista dos produtos */
+
+.produtos{
+    height: 250px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    max-width: calc(100vw - 55px);
+    margin-bottom: 30px;
 }

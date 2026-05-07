@@ -2,9 +2,12 @@
 
 import { mercados } from "../../../data/mercados";
 import { produtos } from "../../../data/produtos";
+import { categorias } from "../../../data/categorias";
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import Link from 'next/link';
+import styles from './page.module.css';
+import CardProduto from "../../components/cardProduto/CardProduto";
 
 export default function PaginaMercado() {
 
@@ -28,69 +31,64 @@ export default function PaginaMercado() {
 
       return {
         ...produto,
-        precoLocal: oferta.preco
+        preco: oferta.preco
       };
     })
     .filter(Boolean);
 
   return (
-    <section className="pagina-detalhes">
+    <main className="conteudo">
+      <section className={styles['pagina-detalhes']}>
 
-      <button className="voltar">
-        <Link href={`/`} className="link-home"> Home </Link> &gt; {mercado.nome}
-      </button>
+        <button className={styles.voltar}>
+          <Link href={`/`} className={styles['link-home']}> Home </Link> &gt; {mercado.nome}
+        </button>
 
-      <section className="pagina-mercado">
+        <section className={styles['pagina-mercado']}>
 
-        <section className="info-mercado">
-          <div className="imagem-mercado">
-            <img className="pagina-mercado-imagem" src={mercado.imagem} alt={mercado.nome}  />
-          </div>
-          <h1>{mercado.nome}</h1>
-          <p>{mercado.endereco}</p>
-        </section>        
+          <section className={styles['info-mercado']}>
+            <div className={styles['imagem-mercado']}>
+              <img className={styles['pagina-mercado-imagem']} src={mercado.imagem} alt={mercado.nome}  />
+            </div>
+            <h1>{mercado.nome}</h1>
+            <p>{mercado.endereco}</p>
+          </section>        
 
-        <section className="produtos-mercado">
+          <section className={styles['produtos-mercado']}>
 
-          <article className="titulo">
-            Produtos Mais Populares
-          </article>
+            <article className={styles.titulo}>
+              Produtos Mais Populares
+            </article>
+            <section className={styles['categorias-desktop']}>
+						  <ul id="categorias-filtros">
+                { categorias.map(categoria => (
+									<li key={categoria} onClick={() => setCategoriaAtiva(categoria)} className={categoriaAtiva == categoria ? styles['filtro-ativo'] : ""}> {categoria} </li>
+								))}
+              </ul>
+            </section>
+            <section className={styles['categorias-mobile']}>
+              <select id="filtros-mobile" value={categoriaAtiva} onChange={(e) => setCategoriaAtiva(e.target.value)}>
+                  { categorias.map(categoria => (
+                    <option key={categoria} value={categoria}>{categoria}</option>
+                  ))}
+              </select>
+          </section>
+            <section className={styles.produtos}>
 
-          {gerarCategorias?.()}
+              {produtosNesteMercado.length === 0 ? (
+                <p>Nenhum produto encontrado neste mercado</p>
+              ) : (
+                produtosNesteMercado.map(produto => (
+                  <CardProduto id={produto.id} nome={produto.nome} preco={produto.preco} imagem={produto.imagem} key={produto.id}/>
+                ))
+              )}
 
-          <section className="produtos">
-
-            {produtosNesteMercado.length === 0 ? (
-              <p>Nenhum produto encontrado neste mercado</p>
-            ) : (
-              produtosNesteMercado.map(produto => (
-                <article key={produto.id} className="produto">
-
-                  <img
-                    src={produto.imagem}
-                    alt={produto.nome}
-                  />
-
-                  <section className="info-produto">
-                    <p>{produto.nome}</p>
-                    <p className="preco">
-                      R$ {produto.precoLocal.toFixed(2).replace(".", ",")}
-                    </p>
-                  </section>
-
-                  <button className="adicionar-home">
-                    +
-                  </button>
-
-                </article>
-              ))
-            )}
+            </section>
 
           </section>
-
         </section>
       </section>
-    </section>
+    </main>
   );
 
   // Gerar categorias dos produtos

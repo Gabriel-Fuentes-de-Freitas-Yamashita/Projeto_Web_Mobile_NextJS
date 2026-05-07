@@ -1,116 +1,24 @@
 "use client"
 import { useState } from 'react';
+import { produtos } from "../data/produtos";
+import { mercados } from "../data/mercados";
+import { categorias } from "../data/categorias";
 import Link from 'next/link';
+import CardProduto from "./components/cardProduto/CardProduto";
+import CardMercado from "./components/cardMercado/CardMercado";
+import styles from './page.module.css';
 
 export default function Home() {
 
   const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
 
-  // Dados de produtos, mercados e lista do usuário
-
-  const produtos = [{
-          id: 1,
-          nome: "Coca-Cola 2L",
-          imagem: "/imagens-produtos/coca.jpg",
-          categoria: "Bebidas",
-          ofertas: [
-              { loja: "Assaí", preco: 8.99, mercado: "/imagens-mercados/assai.png", endereco: "R. James Holland, 668" },
-              { loja: "Pão de Açúcar", preco: 9.49, mercado: "/imagens-mercados/pao_de_acucar.png", endereco: "R. Maranhão, 875" },
-              { loja: "Carrefour", preco: 8.75, mercado: "/imagens-mercados/carrefour.png", endereco: "Av. Rio Branco, 115" }
-          ]
-      },
-      {
-          id: 2,
-          nome: "Chocolate Kinder Joy 20g",
-          imagem: "/imagens-produtos/kinder-ovo.avif",
-          categoria: "Doces",
-          ofertas: [
-              { loja: "Mambo", preco: 7.99, mercado: "/imagens-mercados/mambo.webp", endereco: "R. Aurélia, 1973 - Vila Romana" },
-              { loja: "Pão de Açúcar", preco: 9.20, mercado: "/imagens-mercados/pao_de_acucar.png", endereco: "R. Maranhão, 875" }
-          ]
-      },
-      {
-          id: 3,
-          nome: "Leite Parmalat 1L",
-          imagem: "/imagens-produtos/leite-parmalat.avif",
-          categoria: "Padaria e Matinais",
-          ofertas: [
-              { loja: "Assaí Atacadista", preco: 5.49, mercado: "/imagens-mercados/assai.png", endereco: "R. James Holland, 668" },
-              { loja: "Extra", preco: 5.98, mercado: "/imagens-mercados/extra.png", endereco: "Av. Gen. Olímpio da Silveira, 414 - Barra Funda" }
-          ]
-      },
-      {
-          id: 4,
-          nome: "Monster Branco 473ml",
-          imagem: "/imagens-produtos/monster-branco.avif",
-          categoria: "Energéticos e Isotônicos",
-          ofertas: [
-              { loja: "Extra", preco: 12.00, mercado: "/imagens-mercados/extra.png", endereco: "Av. Gen. Olímpio da Silveira, 414 - Barra Funda" },
-              { loja: "Assaí", preco: 8.69, mercado: "/imagens-mercados/assai.png", endereco: "R. James Holland, 668" },
-              { loja: "Mambo", preco: 9.98, mercado: "/imagens-mercados/mambo.webp", endereco: "R. Aurélia, 1973 - Vila Romana" }
-          ]
-      },
-      {
-          id: 5,
-          nome: "Sabonete Dove 90g",
-          imagem: "/imagens-produtos/sabonete-dove.avif",
-          categoria: "Higiene e Perfumaria",
-          ofertas: [
-              { loja: "Assaí", preco: 4.50, mercado: "/imagens-mercados/assai.png", endereco: "R. James Holland, 668" },
-              { loja: "Carrefour", preco: 3.99, mercado: "/imagens-mercados/carrefour.png", endereco: "Av. Rio Branco, 115" }
-          ]
-      },
-      {
-          id: 6,
-          nome: "Bis Original 126g",
-          imagem: "/imagens-produtos/bis.avif",
-          categoria: "Doces",
-          ofertas: [
-              { loja: "Assaí", preco: 7.15, mercado: "/imagens-mercados/assai.png", endereco: "R. James Holland, 668" },
-              { loja: "Pão de Açúcar", preco: 8.49, mercado: "/imagens-mercados/pao_de_acucar.png", endereco: "R. Maranhão, 875" },
-              { loja: "Extra", preco: 7.99, mercado: "/imagens-mercados/extra.png", endereco: "Av. Gen. Olímpio da Silveira, 414 - Barra Funda" }
-          ]
-      },
-      {
-          id: 7,
-          nome: "Barra Cereal Nutry",
-          imagem: "/imagens-produtos/barra-nutry.avif",
-          categoria: "Salgadinhos e Snacks",
-          ofertas: [
-              { loja: "Extra", preco: 1.55, mercado: "/imagens-mercados/extra.png", endereco: "Av. Gen. Olímpio da Silveira, 414 - Barra Funda" },
-              { loja: "Assaí", preco: 1.38, mercado: "/imagens-mercados/assai.png", endereco: "R. James Holland, 668" }
-          ]
-      },
-  ];
-
-  const mercados = [];
-
-  let minhaLista = [];
-
-  // Verificar cada produto e adicionar mercados à lista de mercados
-
-  produtos.forEach(produto => {
-      produto.ofertas.forEach(oferta => {
-          const existe = mercados.find(m => m.endereco === oferta.endereco);
-          
-          if (!existe) {
-              mercados.push({
-                  nome: oferta.loja,
-                  imagem: oferta.mercado,
-                  endereco: oferta.endereco
-              });
-          }
-      });
-  });
-
   // Verificar cada produto e preço de cada oferta para mostrar menor preço na página "Home"
 
-    const produtosComPreco = produtos.map((p) => {
-    const melhorOferta = p.ofertas.reduce((menor, atual) => {
-      return atual.preco < menor.preco ? atual : menor;
-    }, p.ofertas[0]);
-
-    return {
+  const produtosComPreco = produtos.map((p) => {
+  	const melhorOferta = p.ofertas.reduce((menor, atual) => {
+    	return atual.preco < menor.preco ? atual : menor;
+  	}, p.ofertas[0]);
+		return {
       ...p,
       preco: melhorOferta.preco
     };
@@ -127,90 +35,43 @@ export default function Home() {
           <input type="text" placeholder="Pesquisar..."/>
       </form>
       <main className="conteudo">
-        <article className="titulo">Produtos Mais Populares</article>
-        {gerarCategorias()} 
-        <section className="produtos">
-            {gerarCardsProdutos("Todos", produtosFiltrados)} 
+        <article className={styles.titulo}>Produtos Mais Populares</article>
+				<section className={styles['categorias-desktop']}>
+						<ul id="categorias-filtros">
+								{ categorias.map(categoria => (
+									<li key={categoria} onClick={() => setCategoriaAtiva(categoria)} className={categoriaAtiva == categoria ? styles['filtro-ativo'] : ""}> {categoria} </li>
+								))}
+						</ul>
+				</section>
+				<section className={styles['categorias-mobile']}>
+						<select id="filtros-mobile" value={categoriaAtiva} onChange={(e) => setCategoriaAtiva(e.target.value)}>
+								{ categorias.map(categoria => (
+									<option key={categoria} value={categoria}>{categoria}</option>
+								))}
+						</select>
+				</section>
+        <section className={styles.produtos}>
+            { produtosFiltrados.length === 0 ? (
+                <p>Nenhum produto encontrado nesta categoria.</p>
+            ) : ( 
+                produtosFiltrados.map(produto => ( 
+                    <CardProduto id={produto.id} nome={produto.nome} preco={produto.preco} imagem={produto.imagem} key={produto.id}/>
+                ))
+            )}
         </section>
-        <article className="titulo">Mercados</article>
-        <section className="mercados">
-            {gerarCardsMercados()}
+        <article className={styles.titulo}>Mercados</article>
+        <section className={styles.mercados}>
+            { mercados.length === 0 ? (
+                <p>Nenhum mercado encontrado.</p>
+            ) : ( 
+                mercados.map(mercado => (
+								<Link href={`/mercado/${mercado.nome}`} key={mercado.endereco}>
+									<CardMercado nome={mercado.nome} endereco={mercado.endereco} imagem={mercado.imagem}/>
+								</Link>
+							))
+						)}
         </section>
       </main>
     </>
   );
-
-  // Gerar categorias dos produtos
-  function gerarCategorias() {
-      return <>
-          <section className="categorias-desktop">
-              <ul id="categorias-filtros">
-                  <li onClick={() => setCategoriaAtiva("Todos")} className={categoriaAtiva === "Todos" ? "filtro-ativo" : ""}> Todos </li>
-                  <li onClick={() => setCategoriaAtiva("Higiene e Perfumaria")} className={categoriaAtiva === "Higiene e Perfumaria" ? "filtro-ativo" : ""}> Higiene e Perfumaria </li>
-                  <li onClick={() => setCategoriaAtiva("Salgadinhos e Snacks")} className={categoriaAtiva === "Salgadinhos e Snacks" ? "filtro-ativo" : ""}> Salgadinhos e Snacks </li>
-                  <li onClick={() => setCategoriaAtiva("Padaria e Matinais")} className={categoriaAtiva === "Padaria e Matinais" ? "filtro-ativo" : ""}> Padaria e Matinais </li>
-                  <li onClick={() => setCategoriaAtiva("Bebidas")} className={categoriaAtiva === "Bebidas" ? "filtro-ativo" : ""}> Bebidas </li>
-                  <li onClick={() => setCategoriaAtiva("Energéticos e Isotônicos")} className={categoriaAtiva === "Energéticos e Isotônicos" ? "filtro-ativo" : ""}> Energéticos e Isotônicos </li>
-                  <li onClick={() => setCategoriaAtiva("Doces")} className={categoriaAtiva === "Doces" ? "filtro-ativo" : ""}> Doces </li>
-              </ul>
-          </section>
-          <section className="categorias-mobile">
-              <select id="filtros-mobile" value={categoriaAtiva} onChange={(e) => setCategoriaAtiva(e.target.value)}>
-                  <option value="Todos">Todos</option>
-                  <option value="Higiene e Perfumaria">Higiene e Perfumaria</option>
-                  <option value="Salgadinhos e Snacks">Salgadinhos e Snacks</option>
-                  <option value="Padaria e Matinais">Padaria e Matinais</option>
-                  <option value="Bebidas">Bebidas</option>
-                  <option value="Energéticos e Isotônicos">Energéticos e Isotônicos</option>
-                  <option value="Doces">Doces</option>
-              </select>
-          </section>
-      </>
-    ;
-  }
-
-  function gerarCardsProdutos(categoriaFiltro = "Todos", listaBase = null) {
-
-      let listaParaFiltrar = (listaBase !== null) ? listaBase : produtosComPreco;
-      let listaFiltrada = listaParaFiltrar;
-
-      if (categoriaFiltro !== "Todos") {
-          listaFiltrada = listaParaFiltrar.filter(p => p.categoria === categoriaFiltro);
-      }
-
-      if (listaFiltrada.length === 0) return <p>Nenhum produto encontrado nesta categoria.</p>;
-
-      return listaFiltrada.map(produto => ( 
-        <Link href={`/produto/${produto.id}`} key={produto.id}>
-          <article className="produto">
-              <img src={produto.imagem}/>
-              <section className="info-produto">
-                  <p> {produto.nome} </p>
-                  <p className="preco"> R$ {produto.preco.toFixed(2).replace('.', ',')} </p>
-              </section>
-              <button className="adicionar-home" 
-                  data-nome={produto.nome} 
-                  data-preco={produto.preco}
-                  data-imagem={produto.imagem}
-              >
-                +
-              </button>
-          </article>
-        </Link>
-      )
-    );
-  }
-
-  function gerarCardsMercados() {
-    return mercados.map(mercado => (
-        <Link href={`/mercado/${mercado.nome}`} key={mercado.endereco}>
-          <article className="mercado">
-            <img src={mercado.imagem}/>
-            <p> {mercado.nome} </p>
-            <p> {mercado.endereco} </p>
-          </article>
-        </Link>
-      )
-    );
-  }
 }

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { produtos } from "../../../data/produtos";
-import { mercados } from "../../../data/mercados";
+import styles from './page.module.css';
 
 export default function Produto() {
 
@@ -10,51 +10,48 @@ export default function Produto() {
     const idProduto = params.id;
 
     const produto = produtos.find(p => p.id === Number(idProduto));
-    console.log(produto)
-    if (!produto) {
-        alert("Produto Não Encontrado");
-        return;
-    }
 
     return(
-        <section className="pagina-detalhes">
-            <button className="voltar">
-                <Link href={`/`} className="link-home"> Home </Link> &gt; {produto.nome}
-            </button>
-            <h1>{produto.nome}</h1>
-            <section className="pagina-produto">
-                <div className="imagem-produto">
-                    <img src={produto.imagem}/>
-                </div>
-                <section className="lista-mercados">
-                    {gerarMercadosDoProduto(produto.nome)}
-                </section>
-            </section>
-        </section>
-    );
-
-    function gerarMercadosDoProduto(nome) {
-
-        const produto = produtos.find((p) => p.nome === nome);
-
-        if (!produto || !produto.ofertas) {
-            return "<p>Nenhuma oferta encontrada.</p>"
-        };
-        
-        return produto.ofertas.map(oferta => (
-            <article className="produto-mercado" key={oferta.endereco}>
-                <img src={oferta.mercado}/>
-                <div className="produto-conteudo">
-                    <p> Endereço: {oferta.endereco} </p>
-                    <p className="produto-preco"> R$ {oferta.preco.toFixed(2).replace('.', ',')}</p>
-                </div>
-                <button className="adicionar-produto"
-                    data-nome={produto.nome} 
-                    data-preco={oferta.preco} 
-                    data-imagem={produto.imagem}>&plus;
+        <main className="conteudo">
+            <section className={styles['pagina-detalhes']}>
+                <button className={styles.voltar}>
+                    <Link href={`/`} className={styles['link-home']}> Home </Link> &gt; {produto.nome}
                 </button>
-            </article>
-            )
-        );
-    }
-};
+                { !produto ? (
+                    <p> Produto Não Encontrado </p>
+                ) : (
+                    <>
+                        <h1>{produto.nome}</h1>
+                        <section className={styles['pagina-produto']}>
+                            <div className={styles['imagem-produto']}>
+                                <img src={produto.imagem}/>
+                            </div>
+                            <section className={styles['lista-mercados']}>
+                                { (!produto.ofertas || produto.ofertas.length === 0) ? (
+                                    <p>Nenhuma oferta encontrada.</p>
+                                ) : (
+                                    produto.ofertas.map(oferta => (
+                                        <article className={styles['produto-mercado']} key={oferta.endereco}>
+                                            <img src={oferta.mercado}/>
+                                            <div className={styles['produto-conteudo']}>
+                                                <p> Endereço: {oferta.endereco} </p>
+                                                <p className={styles['produto-preco']}> 
+                                                    R$ {oferta.preco.toFixed(2).replace('.', ',')}
+                                                </p>
+                                            </div>
+                                            <button className={styles['adicionar-produto']}
+                                                data-nome={produto.nome} 
+                                                data-preco={oferta.preco} 
+                                                data-imagem={produto.imagem}>+
+                                            </button>
+                                        </article>
+                                    ))
+                                )}
+                            </section>
+                        </section>
+                    </>
+                )}
+            </section>
+        </main>
+    );
+}

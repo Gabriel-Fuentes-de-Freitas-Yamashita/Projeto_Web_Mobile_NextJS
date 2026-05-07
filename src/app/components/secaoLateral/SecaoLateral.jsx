@@ -1,73 +1,69 @@
-function alterarQuantidade(indice, valor) {
-    if (!minhaLista[indice].quantidade) minhaLista[indice].quantidade = 1;
-    
-    minhaLista[indice].quantidade += valor;
-
-    if (minhaLista[indice].quantidade < 1) {
-        removerDaLista(indice);
-    } else {
-        renderizarLista();
-    }
-}
-
-function renderizarLista() {
-
-    const container = document.getElementById('lista-itens');
-    const precoTotalElemento = document.getElementById('preco-total');
-    
-    let somaTotal = 0;
-    container.innerHTML = "";
-
-    if (minhaLista.length === 0) {
-        container.innerHTML = '<p className="vazio">Adicione Itens à Lista......</p>';
-        precoTotalElemento.innerHTML = "Total: R$ 0,00";
-    } else {
-
-        const fragmento = document.createDocumentFragment();
-
-        minhaLista.forEach((produto, indice) => {
-
-            const quantidade = produto.quantidade || 1;
-            const subtotal = produto.preco * quantidade;
-
-            somaTotal += subtotal;
-            
-            const li = document.createElement('li');
-            li.classNameName = 'produto-lista';
-
-            li.innerHTML = `
-                <img src="${produto.imagem}">
-                <article className="produto-info-lista">
-                    <p> ${produto.nome} </p>
-                    <p className-> R$ ${(produto.preco * quantidade).toFixed(2).replace('.', ',')} </p>
-                </article>
-                <section className="controle-quantidade">
-                    <button onclick="alterarQuantidade(${indice}, 1)">&plus;</button>
-                    <p> ${quantidade} </p>
-                    <button onclick="alterarQuantidade(${indice}, -1)">&minus;</button>
-                </section>
-            `;
-            fragmento.appendChild(li);
-        });
-        container.appendChild(fragmento);
-        
-        precoTotalElemento.innerHTML = `Total: R$ ${somaTotal.toFixed(2).replace('.', ',')}`;
-    }
-}
-
+"use client"
+import { useState } from 'react';
+import './secaoLateral.css';
 
 const SecaoLateral = () => {
+
+    const [estaAberto, setEstaAberto] = useState(false);
+
+    const [minhaLista, setMinhaLista] = useState([]);
+
+    const toggleLista = () => {
+        setEstaAberto(!estaAberto);
+    };
+
+    const calcularTotal = () => {
+        return minhaLista.reduce((acc, produto) => acc + produto.preco * produto.quantidade, 0);
+    }
+
+    const alterarQuantidade = (indice, valor) => {
+
+        const listaAlterada = minhaLista.reduce((acc, produto, i) => {
+            if (i === indice) {
+                const novaQtd = produto.quantidade + valor;
+                if (novaQtd > 0) {
+                    acc.push({...ClipboardItem, quantidade: novaQtd});
+                }
+            } else {
+                acc.push(produto)
+            }
+            return acc;
+        }, []);
+
+        setMinhaLista(listaAlterada);
+    }
+
     return (
-        <aside className="secao-lateral">
-            <button id="toggle-lista"> 
+        <aside className={`secao-lateral ${estaAberto ? 'aberto' : ''}`}>
+            <button id="toggle-lista" onClick={toggleLista}> 
                 <i className="fa-solid fa-chevron-left"></i> 
                 Lista
             </button>
             <section className="lista">
                 <ul id="lista-itens">
+                    {minhaLista.length === 0 ? (
+                        <p className="vazio">Adicione Itens à Lista...</p>
+                    ) : (
+                        minhaLista.map((produto, indice) => (
+                            <li key={indice} className="produto-lista">
+                                <Image src="${produto.imagem}"/>
+                                <article className="produto-info-lista">
+                                    <p> ${produto.nome} </p>
+                                    <p className-> R$ ${(produto.preco * produto.quantidade).toFixed(2).replace('.', ',')} </p>
+                                </article>
+                                <section className="controle-quantidade">
+                                    <button onClick={alterarQuantidade(indice, 1)}>&plus;</button>
+                                    <p> {produto.quantidade} </p>
+                                    <button onClick={alterarQuantidade(indice, -1)}>&minus;</button>
+                                </section>
+                            </li>
+                        ))
+                    )}
                 </ul>
                 <footer className="rodape-lista">
-                    <p id="preco-total"></p>
+                    <p id="preco-total">
+                        Total: R$ {calcularTotal().toFixed(2).replace('.', ',')}
+                    </p>
                 </footer>
             </section>
         </aside>

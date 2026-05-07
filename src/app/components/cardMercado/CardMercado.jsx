@@ -1,19 +1,13 @@
-const gerarCardsMercados = (mercados) => {
-  return (
-    <>
-      {mercados.map((mercado) => (
-        <article
-          key={mercado.nome}
-          className="mercado"
-          onClick={() => renderizarPaginaMercado(mercado.nome)}
-        >
-          <img src={mercado.imagem} alt={mercado.nome} />
-          <p>{mercado.nome}</p>
-          <p>{mercado.endereco}</p>
-        </article>
-      ))}
-    </>
-  );
-};
+import styles from './cardMercado.module.css';
 
-export default gerarCardsMercados;
+const CardMercado = ({nome, endereco, imagem}) => {
+    return (
+        <article className={styles.mercado}>
+          <img src={imagem} alt={nome} />
+          <p>{nome}</p>
+          <p>{endereco}</p>
+        </article>
+    );
+}
+
+export default CardMercado;
