@@ -1,26 +1,52 @@
 "use client";
 
+// 1. Removi o import direto do produtos.js
 import { mercados } from "../../../data/mercados";
-import { produtos } from "../../../data/produtos";
 import { categorias } from "../../../data/categorias";
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+// 2. Adicionei o useEffect
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import CardProduto from "../../components/cardProduto/CardProduto";
 
 export default function PaginaMercado() {
-
   const [categoriaAtiva, setCategoriaAtiva] = useState("Todos");
+  
+  // 3. Criei estados para guardar os produtos da API e o status de carregamento
+  const [produtos, setProdutos] = useState([]);
+  const [carregando, setCarregando] = useState(true);
+
   const params = useParams();
   const nomeMercado = params.nome;
+
+  // 4. Usei o useEffect para chamar a sua API quando a página abre
+  useEffect(() => {
+    async function carregarProdutos() {
+      try {
+        const resposta = await fetch('/api/produtos');
+        const dados = await resposta.json();
+        setProdutos(dados); // Salva os dados no estado
+      } catch (erro) {
+        console.error("Erro ao buscar produtos:", erro);
+      } finally {
+        setCarregando(false); // Avisa que terminou de carregar
+      }
+    }
+
+    carregarProdutos();
+  }, []);
 
   const mercado = mercados.find(
     m => m.nome.toLowerCase() === nomeMercado.toLowerCase()
   );
 
+  // 5. Mostra um aviso enquanto a API não responde
+  if (carregando) return <p>Carregando produtos...</p>;
+
   if (!mercado) return <p>Mercado não encontrado</p>;
 
+  // A partir daqui, a sua lógica continua a mesma, mas agora usa a lista da API!
   const produtosNesteMercado = produtos
     .map(produto => {
       const oferta = produto.ofertas.find(
@@ -60,10 +86,10 @@ export default function PaginaMercado() {
               Produtos Mais Populares
             </article>
             <section className={styles['categorias-desktop']}>
-						  <ul id="categorias-filtros">
+              <ul id="categorias-filtros">
                 { categorias.map(categoria => (
-									<li key={categoria} onClick={() => setCategoriaAtiva(categoria)} className={categoriaAtiva == categoria ? styles['filtro-ativo'] : ""}> {categoria} </li>
-								))}
+                  <li key={categoria} onClick={() => setCategoriaAtiva(categoria)} className={categoriaAtiva == categoria ? styles['filtro-ativo'] : ""}> {categoria} </li>
+                ))}
               </ul>
             </section>
             <section className={styles['categorias-mobile']}>
